@@ -13,7 +13,32 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.google.common.io.Files;
 
-
+/**
+ * Wellcome to the Jungle!
+ * Geralmente acabava criando builders na mão, ou então usando o plugin spark
+ * e tendo de desacoplar o buider gerado na mão, até que certo dia precisei gerar builders 
+ * de 35 classes, foi então que decidi criar essa belezinha ;)
+ * 
+ * 
+ * Esta classe feia, porém funcional visa auxiliar na geração de classes builders
+ * para dominios java de forma desacoplada em um package especifico. 
+ * 
+ * Está perfeita? Não. Existem diversas melhorias que podem ser feitas, 
+ * porém por hora atende o escopo que defini.
+ * 
+ * - Cria um diretório /builder com base no arg[1]
+ * Para cada classe contida em um classPath:
+ * 
+ * - Gera-se um arquivo . java cujo nome é nomedaclasse + Builder;
+ * - Adiciona os imports;
+ * - Declara a entidade;
+ * - Para cada atributo desta entidade gera-se um metodo de atribuição com o prefixo "with";
+ * - Gera o método de build que retorna a nova instancia da entidade; 
+ * 
+ * 
+ * @author Emiliano Fagundes - SouthSystem -ef69036
+ *
+ */
 @SpringBootApplication
 public class DomainBuilderGeneratorApplication {
 
@@ -39,6 +64,8 @@ public class DomainBuilderGeneratorApplication {
 	private static final String 	NEW  = "new" ;
 	private static final String 	TAB  = "\t" ;
 	private static final String 	IMPORT  = "import" ;
+	private static final String 	BUILD  = "build" ;
+
 
 
 
@@ -88,6 +115,12 @@ public class DomainBuilderGeneratorApplication {
 					
 					
 					
+					final String withOtherConstructor =  TAB+PUBLIC_MODIFIER + SPACE + builderClassName + OPEN_PARENTESIS
+							+ CLOSE_PARENTESIS + OPEN_BRACKET +NEW_LINE
+							+TAB+TAB+ THIS  + DOT+ ENTITY 
+							+SPACE + EQUAL + SPACE + NEW + domainName + SPACE + OPEN_PARENTESIS +domainName+SPACE+ domainName.substring(0,1).toLowerCase()+ domainName.substring(1) 
+							+ CLOSE_PARENTESIS  + SEMICOLON + NEW_LINE +TAB+ CLOSE_BRACKET;
+					
 					
 					Set<String> imports = new HashSet<String>();
 					Set<String> withMethods = new HashSet<String>();
@@ -127,6 +160,21 @@ public class DomainBuilderGeneratorApplication {
 								TAB + CLOSE_BRACKET+NEW_LINE;
 						withMethods.add(method);
 					}
+				
+					
+					String buildMethod = TAB  +  PUBLIC_PREFIX + 
+							domainName +
+							SPACE +
+							BUILD +
+							OPEN_PARENTESIS +
+							CLOSE_PARENTESIS + 
+							OPEN_BRACKET + 
+							NEW_LINE +
+							TAB+TAB  + RETURN +
+							SPACE +
+							THIS+DOT+ENTITY+SEMICOLON +
+							NEW_LINE + 
+							TAB + CLOSE_BRACKET+NEW_LINE;
 					
 					StringBuilder builderSource = new StringBuilder();
 					builderSource.append(builderClassHeader)
@@ -143,11 +191,15 @@ public class DomainBuilderGeneratorApplication {
 										 .append(NEW_LINE)
 										 .append(NEW_LINE)
 										 .append( voidConstructor)
+										 .append(NEW_LINE)
+										 .append(withOtherConstructor)
 										 .append(NEW_LINE);
 					
 				
 					withMethods.forEach( meth -> builderSource.append(meth) );
-					builderSource.append(CLOSE_BRACKET);
+					builderSource.append(buildMethod)
+										 .append(NEW_LINE)
+										 .append(CLOSE_BRACKET);
 					FileWriter myWriter = new FileWriter(builderDirectory+"\\"+builderFileClassName);
 		    		myWriter.write(builderSource.toString());
 		    	    myWriter.close();
