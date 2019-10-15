@@ -8,7 +8,7 @@ que terão seus builders gerados e **[1]** o path onde encontram-se os **.java**
 
 Basicamente o algoritimo funciona da seguinte forma:
 
-1 - Pressupondo que o padrão de package utiliado é **"com.foo.domain"** e com base no segundo argumento, 
+1 - Pressupondo que o padrão de package utilizado é **"com.foo.domain"** e com base no segundo argumento, 
 cria-se um sub-diretório **\builder** (onde serão armazenados os **.java** dos builders).
 
 2 - Para cada arquivo .class que estiver no diretório apontado no primeiro argumento,utilizando as bibliotecas [Guava](https://github.com/google/guava) 
