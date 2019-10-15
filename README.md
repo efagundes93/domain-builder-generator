@@ -38,3 +38,7 @@ Por exemplo:
 ```java -jar target\domain-builder-generator-0.0.1-SNAPSHOT.jar C:\Java\gambiarra-project\target\classes\br\com\gambiarraproject\domain C:\Java\gambiarra-project\src\main\java\br\com\gambiarraproject\domain```
 
 
+## Onde vão parar meus builders?
+Calma, se não fui claro, eles basicamente estarão em caminho_dos.java/builders ou no caso do exemplo C:\Java\gambiarra-project\src\main\java\br\com\gambiarraproject\domain\builder
+
+
