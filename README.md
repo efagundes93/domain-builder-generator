@@ -41,4 +41,7 @@ Por exemplo:
 ## Onde vão parar meus builders?
 Calma, se não fui claro, eles basicamente estarão em caminho_dos.java/builders ou no caso do exemplo C:\Java\gambiarra-project\src\main\java\br\com\gambiarraproject\domain\builder
 
+## Próximos passos ##
 
+- Melhorar o código
+- Transformar este projeto em um plugin do eclipse e/ou maven
