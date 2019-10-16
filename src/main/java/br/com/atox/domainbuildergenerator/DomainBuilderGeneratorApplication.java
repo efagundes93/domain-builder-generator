@@ -109,20 +109,22 @@ public class DomainBuilderGeneratorApplication {
 					final String voidConstructor =  TAB+PUBLIC_MODIFIER + SPACE + builderClassName + OPEN_PARENTESIS
 																	+ CLOSE_PARENTESIS + OPEN_BRACKET +NEW_LINE
 																	+TAB+TAB+ THIS  + DOT+ ENTITY 
-																	+SPACE + EQUAL + SPACE + NEW + domainName + SPACE + OPEN_PARENTESIS 
+																	+SPACE + EQUAL + SPACE + NEW + SPACE + domainName + SPACE + OPEN_PARENTESIS 
 																	+ CLOSE_PARENTESIS  + SEMICOLON + NEW_LINE +TAB+ CLOSE_BRACKET;
 					
 					
 					
 					
-					final String withOtherConstructor =  TAB+PUBLIC_MODIFIER + SPACE + builderClassName + OPEN_PARENTESIS
-							+ CLOSE_PARENTESIS + OPEN_BRACKET +NEW_LINE
-							+TAB+TAB+ THIS  + DOT+ ENTITY 
-							+SPACE + EQUAL + SPACE + NEW + domainName + SPACE + OPEN_PARENTESIS +domainName+SPACE+ domainName.substring(0,1).toLowerCase()+ domainName.substring(1) 
-							+ CLOSE_PARENTESIS  + SEMICOLON + NEW_LINE +TAB+ CLOSE_BRACKET;
+					final String withOtherConstructor =  TAB+PUBLIC_MODIFIER + SPACE + builderClassName + OPEN_PARENTESIS + domainName + SPACE +  domainName.substring(0,1).toLowerCase()+ domainName.substring(1) 
+																				+ CLOSE_PARENTESIS + OPEN_BRACKET +NEW_LINE
+																				+TAB+TAB+ THIS  + DOT+ ENTITY 
+																				+SPACE + EQUAL + SPACE + domainName.substring(0,1).toLowerCase()+ domainName.substring(1)  
+																				+ SEMICOLON + NEW_LINE +TAB+ CLOSE_BRACKET;
 					
 					
 					Set<String> imports = new HashSet<String>();
+					
+					imports.add(IMPORT + SPACE +  javaClass.getPackageName()+DOT+domainName + SEMICOLON + NEW_LINE);
 					Set<String> withMethods = new HashSet<String>();
 
 					for (Field field : javaClass.getFields()){
@@ -157,7 +159,7 @@ public class DomainBuilderGeneratorApplication {
 								SPACE +
 								THIS+SEMICOLON +
 								NEW_LINE + 
-								TAB + CLOSE_BRACKET+NEW_LINE;
+								TAB + CLOSE_BRACKET+NEW_LINE+NEW_LINE;
 						withMethods.add(method);
 					}
 				
