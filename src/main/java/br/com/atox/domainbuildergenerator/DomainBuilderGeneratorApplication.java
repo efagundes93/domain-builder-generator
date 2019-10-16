@@ -3,7 +3,10 @@ package br.com.atox.domainbuildergenerator;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.Field;
@@ -62,12 +65,26 @@ public class DomainBuilderGeneratorApplication {
 	private static final String 	DOT = "." ;
 	private static final String 	EQUAL  = "=" ;
 	private static final String 	NEW  = "new" ;
-	private static final String 	TAB  = "\t" ;
+	private static final String 	TAB  = "\t" ;  
 	private static final String 	IMPORT  = "import" ;
 	private static final String 	BUILD  = "build" ;
 
+	
+	private static Map<String,String> dic = Stream.of(new String[][] {
+		  { "java.lang.String", "\"LORENIPSUN\""}, 
+		  {"java.lang.Long", "112312312312312L"}, 
+		  {"java.math.BigDecimal", "new BigDecimal(113321)"}, 
+		  {"java.time.LocalDateTime", "LocalDateTime.now()"}
+		}).collect(Collectors.toMap(data -> data[0], data -> data[1]));
+	
+	
+	
 
-
+	public static String getRandomicValueFromType(String type) {
+	
+		String value = dic.get(type);
+		return  null == value ? "null" : value;
+	}
 
 	public static void main(String[] args) {
 		
@@ -125,6 +142,8 @@ public class DomainBuilderGeneratorApplication {
 					Set<String> imports = new HashSet<String>();
 					
 					imports.add(IMPORT + SPACE +  javaClass.getPackageName()+DOT+domainName + SEMICOLON + NEW_LINE);
+					StringBuilder anyMethod = new StringBuilder(TAB+PUBLIC_MODIFIER + SPACE + builderClassName +SPACE +"any"+OPEN_PARENTESIS + CLOSE_PARENTESIS +OPEN_BRACKET+NEW_LINE+TAB+TAB+RETURN+SPACE +THIS);
+					
 					Set<String> withMethods = new HashSet<String>();
 
 					for (Field field : javaClass.getFields()){
@@ -139,6 +158,7 @@ public class DomainBuilderGeneratorApplication {
 						String fieldTypeSimpleName = splitted[splitted.length - 1];
 						fieldTypeString = IMPORT + SPACE + fieldTypeString + SEMICOLON+NEW_LINE;
 						imports.add(fieldTypeString);
+						
 						
 						String method = TAB  +  PUBLIC_PREFIX + 
 								builderClassName +
@@ -159,10 +179,13 @@ public class DomainBuilderGeneratorApplication {
 								SPACE +
 								THIS+SEMICOLON +
 								NEW_LINE + 
-								TAB + CLOSE_BRACKET+NEW_LINE+NEW_LINE;
+								TAB + CLOSE_BRACKET+NEW_LINE+NEW_LINE;						
+						
+						anyMethod.append(DOT+WITH+fieldName.substring(0,1).toUpperCase()+ fieldName.substring(1) + OPEN_PARENTESIS+getRandomicValueFromType(field.getType().toString())+CLOSE_PARENTESIS + NEW_LINE + TAB + TAB + TAB + TAB+TAB);
 						withMethods.add(method);
 					}
 				
+					anyMethod.append(SEMICOLON+NEW_LINE+TAB+CLOSE_BRACKET);
 					
 					String buildMethod = TAB  +  PUBLIC_PREFIX + 
 							domainName +
@@ -199,13 +222,14 @@ public class DomainBuilderGeneratorApplication {
 					
 				
 					withMethods.forEach( meth -> builderSource.append(meth) );
-					builderSource.append(buildMethod)
+					builderSource.append(anyMethod.toString())
+										 .append(buildMethod)
 										 .append(NEW_LINE)
 										 .append(CLOSE_BRACKET);
 					FileWriter myWriter = new FileWriter(builderDirectory+"\\"+builderFileClassName);
 		    		myWriter.write(builderSource.toString());
 		    	    myWriter.close();
-					
+
 		    	} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -213,7 +237,6 @@ public class DomainBuilderGeneratorApplication {
 
 		    }
 		}
-		
 	
 	}
 
