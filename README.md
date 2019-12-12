@@ -1,6 +1,6 @@
 # domain-builder-generator
 
-Gerar builders manualmente é um pé no saco, pensando nisso este projeto visa auxilizar 
+Gerar builders manualmente é um pé no saco, pensando nisso este projeto visa auxiliar 
 desenvolvedores java que costumam utilizar este design pattern 'automatizando' a geração destas classes.
 
 O **.jar** gerado por este código, espera receber como parâmetro **[0]** o path de onde encontram-se os .class dos dominios
