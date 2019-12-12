@@ -71,19 +71,20 @@ public class DomainBuilderGeneratorApplication {
 
 	
 	private static Map<String,String> dic = Stream.of(new String[][] {
-		  { "java.lang.String", "\"LORENIPSUN\""}, 
-		  {"java.lang.Long", "112312312312312L"}, 
-		  {"java.math.BigDecimal", "new BigDecimal(113321)"}, 
+		  { "java.lang.String", "random(12, true, false)"}, 
+		  {"java.lang.Long", "new Long(random(8, false, true))"}, 
+		  {"java.math.BigDecimal", "new BigDecimal(random(10, false, true))"}, 
 		  {"java.time.LocalDateTime", "LocalDateTime.now()"}
 		}).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 	
-	
-	
+
 
 	public static String getRandomicValueFromType(String type) {
-	
+		
 		String value = dic.get(type);
 		return  null == value ? "null" : value;
+	
+		
 	}
 
 	public static void main(String[] args) {
@@ -142,6 +143,9 @@ public class DomainBuilderGeneratorApplication {
 					Set<String> imports = new HashSet<String>();
 					
 					imports.add(IMPORT + SPACE +  javaClass.getPackageName()+DOT+domainName + SEMICOLON + NEW_LINE);
+					imports.add("import static org.apache.commons.lang3.RandomStringUtils.random;"+ NEW_LINE);
+				
+
 					StringBuilder anyMethod = new StringBuilder(TAB+PUBLIC_MODIFIER + SPACE + builderClassName +SPACE +"any"+OPEN_PARENTESIS + CLOSE_PARENTESIS +OPEN_BRACKET+NEW_LINE+TAB+TAB+RETURN+SPACE +THIS);
 					
 					Set<String> withMethods = new HashSet<String>();
@@ -223,9 +227,12 @@ public class DomainBuilderGeneratorApplication {
 				
 					withMethods.forEach( meth -> builderSource.append(meth) );
 					builderSource.append(anyMethod.toString())
+										 .append(NEW_LINE)
+										 .append(NEW_LINE)
 										 .append(buildMethod)
 										 .append(NEW_LINE)
 										 .append(CLOSE_BRACKET);
+
 					FileWriter myWriter = new FileWriter(builderDirectory+"\\"+builderFileClassName);
 		    		myWriter.write(builderSource.toString());
 		    	    myWriter.close();
